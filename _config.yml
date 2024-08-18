@@ -9,7 +9,7 @@ version:          1.0
 gitbook_version:  3.2.3
 
 url:              'https://nhientruong04.github.io'
-baseurl:          '/home'
+baseurl:          '/ML-blog'
 rss:              RSS
 
 # # bootstrap: use the remote theme for the site itself
