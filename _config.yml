@@ -1,10 +1,9 @@
 # Configurations
-title:            Jekyll Gitbook
-longtitle:        Jekyll Gitbook
-author:           HE Tao
-email:            sighingnow@gmail.com
+title:            Andrew's ML Blog
+author:           Andrew Benedict
+email:            truonghaonhien2822004@gmail.com
 description: >
-  Build Jekyll site with the GitBook style.
+  Personal blog for tracking my learning progress.
 
 version:          1.0
 gitbook_version:  3.2.3
@@ -13,8 +12,8 @@ url:              'https://nhientruong04.github.io'
 baseurl:          '/home'
 rss:              RSS
 
-# bootstrap: use the remote theme for the site itself
-remote_theme: sighingnow/jekyll-gitbook
+# # bootstrap: use the remote theme for the site itself
+# remote_theme: sighingnow/jekyll-gitbook
 
 toc:
   enabled: true
