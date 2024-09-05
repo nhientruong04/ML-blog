@@ -71,3 +71,5 @@ plugins:
   - jekyll-feed
   - jekyll-readme-index
   - jemoji
+
+github_username: nhientruong04
