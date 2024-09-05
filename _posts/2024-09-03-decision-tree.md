@@ -1,7 +1,7 @@
 ---
 title: Cây quyết định (Decision Tree)
 author: Andrew Benedict
-date: 2023-08-13
+date: 2024-09-03
 category: Jekyll
 layout: post
 ---
