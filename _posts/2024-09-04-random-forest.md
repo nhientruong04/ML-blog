@@ -22,7 +22,7 @@ Như tên gọi, RF là tập hợp nhiều cây quyết định và đưa ra k�
 Như đã giới thiệu, bagging là một nhánh thuộc tập hợp các kĩ thuật ensemble learning để tăng hiệu quả của model. Điểm chung của bagging với các kĩ thuật khác (sẽ được giới thiệu ở một bài khác) là lấy một **model yếu** (weak learner) làm gốc, và cố gắng dùng một phương pháp để tăng hiệu quả của model đó. Điểm khác biệt chủ yếu của phương pháp này là nó train các weak learners **song song** với nhau, hay nói cách khác, là mỗi learner học một cách *độc lập* và kết quả của learner này không ảnh hưởng tới learner khác. Như vậy ta biết được RF là một ví dụ điển hình của bagging, nhưng tại sao một Decision Tree lại được xem là một weak learner? Nếu bạn đã xem một bài viết trước của tôi về cây quyết định thì sẽ thấy ví dụ đó nó hoạt động khá ổn, nhưng đó là khi ta sử dụng một bộ dataset nhỏ và ít nhiễu (noise). Decision Tree, như các thuật toán thô sơ khác như K-means, KNN; thì khá dễ bị ảnh hưởng bởi các outliers hay nhiễu trong bộ dữ liệu. Vì vậy, để giảm variance của cây thì ta sẽ dùng một tập hợp nhiều cây, tham khảo dự đoán của từng cây và đưa ra quyết định cuối cùng theo majority voting. Tính chất này cũng là ý tưởng chính của RF, nhưng không đơn giản như vậy. Vấn đề là nếu chúng ta cho các cây học trên cùng một dataset, thì chẳng phải chúng sẽ đưa ra kết quả giống nhau chăng? Kĩ thuật tiếp theo, *bootstrapping*, được sử dụng trong RF để giải quyết vấn đề này.
 
 ## 1.2. Kĩ thuật bootstrapping
-Bootstrapping ám chỉ việc ta tạo một dataset mới bằng cách **tổ hợp lặp** (combination with repetition) các điểm dữ liệu (sample) của dataset cũ. Giả sử ta có train dataset là $X$ với $n$ samples cùng với $Y$ là ground-truth của các samples đó. Sau khi bootstrap $X$, ta được $X_{bstrapped}$ và $Y_{bstrapped}$ cũng có $n$ samples là một bộ dữ liệu train mới. Khi đó:
+Bootstrapping ám chỉ việc ta tạo một dataset mới bằng cách **tổ hợp lặp** (combination with repetition) các điểm dữ liệu (sample) của dataset cũ. Giả sử ta có train dataset là $X$ với $n$ samples cùng với $Y$ là ground truth của các samples đó. Sau khi bootstrap $X$, ta được $X_{bstrapped}$ và $Y_{bstrapped}$ cũng có $n$ samples là một bộ dữ liệu train mới. Khi đó:
 
 $$
 X_{bstrapped} \subseteq X
@@ -46,7 +46,7 @@ Có một hệ quả rất rõ ràng trong việc bootstrapping này, đó là *
 
 ## 1.3. Feature Bagging
 
-Có một kĩ thuật mà người ta dùng để tăng hiệu quả của RF đó chính là **feature bagging**. Nghĩa là ngoài việc tạo bootstrapped dataset, ta còn *chọn ngẫu nhiên không lặp lại* các features có trong bộ dataset cũ đó với số lượng ít hơn ở từng node. Nguyên nhân cho việc này là trong một dataset sẽ có một số features có tương quan và ảnh hưởng rất lớn tới kết quả của cây. Nếu RF được train với toàn bộ features cho từng node, nghĩa là vẫn dùng bootstrapped datasets cho các cây nhưng giữ toàn bộ features, thì các cây có thể sẽ tương tự nhau ở các tiêu chí split node. Điều này là không tốt vì ý tưởng của RF là muốn các weak learners phải không tương quan (decorrelated) thì mới đạt được kết quả tốt nhất phản ánh cho toàn bộ population. Nếu các cây ở mỗi node đều được sử dụng toàn bộ features thì các features mạnh sẽ chiếm ưu thế hơn nên gây ra hiện tượng các cây trong RF chẳng khác gì nhau mấy. Nên để loại bỏ điều này thì ở mỗi node, giả sử $X$ có $m$ features thì mỗi cây quyết định sẽ chỉ được dùng ngẫu nhiền $\sqrt{m}$ features của dataset đang xét (có thể chọn số khác, nhưng dùng căn bậc $2$ được cho là best practice).
+Có một kĩ thuật mà người ta dùng để tăng hiệu quả của RF đó chính là **feature bagging**. Nghĩa là ngoài việc tạo bootstrapped dataset, ta còn *chọn ngẫu nhiên không lặp lại* các features có trong bộ dataset cũ đó với số lượng ít hơn ở từng node. Nguyên nhân cho việc này là trong một dataset sẽ có một số features có tương quan và ảnh hưởng rất lớn tới kết quả của cây. Nếu RF được train với toàn bộ features cho từng node, nghĩa là vẫn dùng bootstrapped datasets cho các cây nhưng giữ toàn bộ features, thì các cây có thể sẽ tương tự nhau ở các tiêu chí split node. Điều này là không tốt vì ý tưởng của RF là muốn các weak learners phải không tương quan (decorrelated) thì mới đạt được kết quả tốt nhất phản ánh cho toàn bộ population. Nếu các cây ở mỗi node đều được sử dụng toàn bộ features thì các features mạnh sẽ chiếm ưu thế hơn nên gây ra hiện tượng các cây trong RF chẳng khác gì nhau mấy. Nên để loại bỏ điều này thì ở mỗi node, giả sử $X$ có $m$ features thì mỗi cây quyết định sẽ chỉ được dùng ngẫu nhiên $\sqrt{m}$ features của dataset đang xét (có thể chọn số khác, nhưng dùng căn bậc $2$ được cho là best practice).
 
 >Thực ra Feature Bagging cũng được áp dụng với dạng cây thông thường của `sklearn` qua việc chọn giá trị cho biến `max_features`
 {:.block-tip}
@@ -61,7 +61,7 @@ $$
 X \setminus X_{bstrapped} = X_{oob}
 $$
 
-Với mỗi một cây ta có một bootstrapped dataset và một oob dataset tương ứng. Để tính được oob score cho cả RF, giả sử ta dùng accuracy, ta cần `predict` trên từng tập oob với cây tương ứng, aggregate kết quả cuối cho từng oob sample của tất cả cây và tính accuracy cho kết quả đó với oob groundtruth. Kĩ thuật khá dễ phải không? *Nhưng tại sao ta cần oob score?* Nói một cách ngắn gọn thì oob score giúp ta đánh giá được model mà không cần tạo một tập validation riêng, rất phù hợp khi ta không có nhiều data. *Vậy chẳng phải đã có k-folds cross validation sao?* Chính xác đây là lí do oob score được dùng. Khi ta sử dụng k-fold để validate thì model của ta ít nhiều đã bị bias, bởi vì sau mỗi lần lặp thì tập validate của lần lặp hiện tại đã hoặc sẽ là tập train của model. Nói cách khác, model đã "thấy" qua tập validate, hiện tượng này còn gọi là *data leakage*. Oob score phản ánh được đúng kết quả của model do nó không bao giờ xuất hiện trong tập train (của cây tương ứng).
+Với mỗi một cây ta có một bootstrapped dataset và một oob dataset tương ứng. Để tính được oob score cho cả RF, giả sử ta dùng accuracy, ta cần `predict` trên từng tập oob với cây tương ứng, aggregate kết quả cuối cho từng oob sample của tất cả cây và tính accuracy cho kết quả đó với oob ground truth. Kĩ thuật khá dễ phải không? *Nhưng tại sao ta cần oob score?* Nói một cách ngắn gọn thì oob score giúp ta đánh giá được model mà không cần tạo một tập validation riêng, rất phù hợp khi ta không có nhiều data. *Vậy chẳng phải đã có k-folds cross validation sao?* Chính xác đây là lí do oob score được dùng. Khi ta sử dụng k-fold để validate thì model của ta ít nhiều đã bị bias, bởi vì sau mỗi lần lặp thì tập validate của lần lặp hiện tại đã hoặc sẽ là tập train của model. Nói cách khác, model đã "thấy" qua tập validate, hiện tượng này còn gọi là *data leakage*. Oob score phản ánh được đúng kết quả của model do nó không bao giờ xuất hiện trong tập train (của cây tương ứng).
 
 ![oob_score_example](../images/random_forest/oob.png)
 
@@ -75,7 +75,7 @@ Với mỗi một cây ta có một bootstrapped dataset và một oob dataset t
       - OOB dataset với $X_{oob}$ và $Y_{oob}$
    3. `fit()` cây `tree_t` với $X_{bstrapped}$ và $Y_{bstrapped}$
    4. Dự đoán kết quả của cây `tree_t` với $X_{oob}$ và lưu kết quả
-   5. Lặp lại từ bước 1 tới khi đủ T lần
+   5. Lặp lại từ bước 1 tới khi đủ $T$ lần
 
 Sau khi thực hiện mỗi vòng lặp ta cần lưu cây `tree_t` vào một danh sách các cây và kết quả dự đoán trên tập oob của cây đó để tính oob score. Giả sử danh sách cây được lưu là `trees_list`, hàm `predict()` trên tập test $X_{test}$ khi sử dụng cây là:
 
@@ -89,7 +89,7 @@ Sau khi thực hiện mỗi vòng lặp ta cần lưu cây `tree_t` vào một d
 >Phần code có thể tham khảo qua [github repository](https://github.com/nhientruong04/random-forest) cá nhân này. **Lưu ý** cấu trúc phần code sẽ không giống hoàn toàn.
 {:.block-tip}
 
-Phần này tôi sẽ thử code lại thuật toán và so sánh kết quả với thuật toán RF của `sklearn`. Phần này sẽ chỉ bao hàm phần code cho `classifier`, model cho bài toán regression vui lòng tham khảo tại github cá nhân được đính kèm trong bài viết. Các thư viện hoặc module được `import` tùy theo từng phần, độc giả khi code có thể tự gom các câu lệnh `import` lên đầu.
+Phần này tôi sẽ thử code lại thuật toán và so sánh kết quả với thuật toán RF của `sklearn`. Phần này sẽ chỉ bao hàm phần code cho `classifier`, các thư viện hoặc module được `import` tùy theo từng phần, độc giả khi code có thể tự gom các câu lệnh `import` lên đầu.
 
 ## 3.1. Chuẩn bị dataset
 
@@ -100,14 +100,14 @@ from sklearn.datasets import load_breast_cancer
 from sklearn.model_selection import train_test_split
 
 X, Y = load_breast_cancer(return_X_y=True)
-x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.1)
+x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.2)
 ```
 
 ## 3.2. Các hàm cần thiết
 
 ### Bootstrapping
 
-Vì ta sẽ phải thao tác đa phần là `numpy array` để tính toán, nên để chọn ngẫu nhiên các samples có lặp lại thì ta sẽ dùng `numpy.random.choice()` để chọn random $1$ array mới với $n$ samples gồm các indices của $X$. Ngoài ra ta còn phải lựa ra indices của các oob samples, điều này có thể dùng tính chất của *tập hợp* (set operations) qua `numpy.setdiff1d()` để tìm ra những indices không có trong tập bootstrapping dataset. Lí do cho việc chọn random indices là vì tính năng array slicing của `numpy` cho phép ta lấy samples chỉ với một array các indices tương ứng. Ta sẽ chỉ code hàm dùng cho một lần bootstrap tương ứng với một cây và hàm sẽ trả về tập train, tập oob để validate và các indices của oob tương ứng.
+Vì ta sẽ phải thao tác đa phần là `numpy array` để tính toán, nên để chọn ngẫu nhiên các samples có lặp lại thì ta sẽ dùng `numpy.random.choice()` để chọn random $1$ array mới với $n$ samples gồm các indices của $X$. Ngoài ra ta còn phải lựa ra indices của các oob samples, điều này có thể dùng tính chất của *tập hợp* (set operations) qua `numpy.setdiff1d()` để tìm ra những indices không có trong tập bootstrapped dataset. Lí do cho việc chọn random indices là vì tính năng array slicing của `numpy` cho phép ta lấy samples chỉ với một array các indices tương ứng. Ta sẽ chỉ code hàm dùng cho một lần bootstrap tương ứng với một cây và hàm sẽ trả về tập train, tập oob để validate và các indices của oob tương ứng.
 
 ```python
 import numpy as np
@@ -123,24 +123,6 @@ def bootstrap_dataset(X, Y):
             "oob_set": (X[oob_indices], Y[oob_indices]),
             "oob_indices": oob_indices
         }
-```
-
-### Đưa kết quả
-
-Thứ ta cần là một hàm predict dựa trên input đưa vào. Ta sẽ đặt `trees_list` là list chứa tất cả cây của RF, hàm predict sẽ lặp qua list và dùng hàm `predict()` của cây để lấy kết quả và `append()` vào list `outputs`. Nếu input đưa vào có shape `(n_samples, n_features)` với `n_samples` là số lượng input còn `n_features` là số lượng features mà tập train có, thì `outputs` sẽ có shape `(n_trees, n_samples)` với từng hàng là dự đoán của từng cây. Nhiệm vụ của hàm `predict()` mà ta đang code là trả về một array có shape `(n_samples,)` là dự đoán của RF với từng sample. Với bài toán classification mà ta đang giải quyết, ta sẽ thực hiện majority voting cho `n_trees` với từng sample qua hàm `scipy.stats.mode()`. Hàm này sẽ chọn ra giá trị xuất hiện nhiều nhất theo axis đang xét, trong trường hợp này là `axis=0` do mỗi hàng là một cây.
-
-```python
-from scipy.stats import mode
-
-def predict(trees_list, X):
-    outputs = list()
-
-    for tree_t in trees_list:
-        outputs.append(tree_t.predict(X))
-
-    outputs = np.array(outputs) # chuyển list thành np.ndarray để thao tác, shape (n_trees, n_samples)
-
-    return mode(outputs, axis=0).mode
 ```
 
 ### Training
@@ -172,6 +154,24 @@ def fit(T, X, Y):
         for i, oob_pred in enumerate(oob_preds):
             # thêm dự doán của samples thứ oob_indices[i] vào oob_list đúng với thứ tự của nó
             oob_list[oob_indices[i]].append(oob_pred)
+```
+
+### Đưa kết quả
+
+Thứ ta cần là một hàm predict dựa trên input đưa vào. Ta sẽ đặt `trees_list` là list chứa tất cả cây của RF, hàm predict sẽ lặp qua list và dùng hàm `predict()` của cây để lấy kết quả và `append()` vào list `outputs`. Nếu input đưa vào có shape `(n_samples, n_features)` với `n_samples` là số lượng input còn `n_features` là số lượng features mà tập train có, thì `outputs` sẽ có shape `(n_trees, n_samples)` với từng hàng là dự đoán của từng cây. Nhiệm vụ của hàm `predict()` mà ta đang code là trả về một array có shape `(n_samples,)` là dự đoán của RF với từng sample. Với bài toán classification mà ta đang giải quyết, ta sẽ thực hiện majority voting cho `n_trees` với từng sample qua hàm `scipy.stats.mode()`. Hàm này sẽ chọn ra giá trị xuất hiện nhiều nhất theo axis đang xét, trong trường hợp này là `axis=0` do mỗi hàng là một cây.
+
+```python
+from scipy.stats import mode
+
+def predict(trees_list, X):
+    outputs = list()
+
+    for tree_t in trees_list:
+        outputs.append(tree_t.predict(X))
+
+    outputs = np.array(outputs) # chuyển list thành np.ndarray để thao tác, shape (n_trees, n_samples)
+
+    return mode(outputs, axis=0).mode
 ```
 
 ### Tính oob accuracy
